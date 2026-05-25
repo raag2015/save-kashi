@@ -173,7 +173,6 @@
   <div class="dash-hd">
     <div class="logo"><div class="logo-icon"><i class="fas fa-heart"></i></div>Save Kashi — Admin</div>
     <div class="dash-hd-right">
-      <button class="btn btn-ghost" onclick="goSetup()" style="font-size:13px;"><i class="fas fa-gears"></i> JSONbin Setup</button>
       <a href="index.html" target="_blank" class="btn btn-ghost" style="font-size:13px;"><i class="fas fa-arrow-up-right-from-square"></i> Live Site</a>
       <button class="btn btn-ghost" onclick="doLogout()" style="font-size:13px;"><i class="fas fa-right-from-bracket"></i> Logout</button>
     </div>
@@ -261,12 +260,7 @@
   var GOAL = 150000000; // ₹15 Crore — do not change
 
   // Credentials — hardcoded (only controls campaign display numbers)
-  var BIN_ID     = '6a141deb6610dd3ae8a15f8b';
-  var ACCESS_KEY = '$2a$10$WdkPW3rw7nuseVqb.jC6xerXCt37gFY0WDzhcJzqwnJOrAmnoUfZ2';
-
-  // Auto-save config so setup screen is skipped
-  localStorage.setItem('kashi_admin_cfg', JSON.stringify({ binId: BIN_ID, accessKey: ACCESS_KEY }));
-  var _cfg = { binId: BIN_ID, accessKey: ACCESS_KEY };
+  var FIREBASE_URL = 'https://save-kashi-default-rtdb.asia-southeast1.firebasedatabase.app/campaign.json';
 
   // ── Auth ─────────────────────────────────────────────────────────────────
   function doLogin() {
@@ -339,10 +333,10 @@
   async function refreshData() {
     var data = getLocal();
     try {
-      var r = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest');
+      var r = await fetch(FIREBASE_URL);
       var j = await r.json();
-      if (j && j.record) { data = j.record; setLocal(data); }
-    } catch(e) { console.warn('JSONbin fetch failed, using local.'); }
+      if (j) { data = j; setLocal(data); }
+    } catch(e) { console.warn('Firebase fetch failed, using local.'); }
     fillForm(data);
     updatePreview(data);
   }
@@ -390,25 +384,20 @@
     setLocal(payload);
     updatePreview(payload);
 
-    if (BIN_ID && ACCESS_KEY) {
-      st.className = 'status'; st.style.display = 'flex'; st.textContent = '⏳ Server par save ho raha hai…';
-      try {
-        var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Access-Key': ACCESS_KEY },
-          body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-          st.className = 'status success';
-          st.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Saved! Sabke visitors ko abhi nayi numbers dikhengi.';
-        } else { throw new Error('HTTP ' + res.status); }
-      } catch(e) {
-        st.className = 'status error';
-        st.innerHTML = '<i class="fas fa-triangle-exclamation"></i>&nbsp; Server save failed (' + e.message + '). Local mein save hua. Bin ID / Key check karo.';
-      }
-    } else {
-      st.className = 'status success';
-      st.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Local mein save hua. JSONbin setup karo cross-device sync ke liye.';
+    st.className = 'status'; st.style.display = 'flex'; st.textContent = '⏳ Server par save ho raha hai…';
+    try {
+      var res = await fetch(FIREBASE_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        st.className = 'status success';
+        st.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Saved! Sabke visitors ko abhi nayi numbers dikhengi.';
+      } else { throw new Error('HTTP ' + res.status); }
+    } catch(e) {
+      st.className = 'status error';
+      st.innerHTML = '<i class="fas fa-triangle-exclamation"></i>&nbsp; Server save failed (' + e.message + '). Local mein save hua.';
     }
     setTimeout(function() { st.style.display = 'none'; }, 5000);
   }

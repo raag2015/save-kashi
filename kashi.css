@@ -302,7 +302,6 @@ footer { background: #1a2333; color: rgba(255,255,255,.75); padding: 56px 0 28px
 
 @media(max-width:900px){
   .donate-two-col { grid-template-columns: 1fr !important; }
-}
   .hero-inner { grid-template-columns: 1fr; gap: 40px; }
   .hero-img-wrap { order: -1; }
   .hero-img-card { max-width: 300px; margin: 0 auto; aspect-ratio: 1/1.2; }

@@ -105,10 +105,10 @@ function createHeartParticle() {
 // Spawn a new heart every 1.8 s (started after load)
 var _heartInterval = null;
 
-// ── Campaign Data (localStorage → JSONbin) ────────────────────────────────
+// ── Campaign Data (localStorage → Firebase) ────────────────────────────────
 
 var CAMPAIGN_GOAL = 150000000; // ₹15 Crore — do not change
-var JSONBIN_URL   = 'https://api.jsonbin.io/v3/b/6a141deb6610dd3ae8a15f8b/latest'; // public read
+var FIREBASE_URL   = 'https://save-kashi-default-rtdb.asia-southeast1.firebasedatabase.app/campaign.json';
 
 function loadCampaignData() {
   // 1. Sync read from localStorage (instant — no flicker)
@@ -116,17 +116,17 @@ function loadCampaignData() {
   try { var raw = localStorage.getItem('kashi_data'); if (raw) data = JSON.parse(raw); } catch(e) {}
   if (data) applyCampaignData(data);
 
-  // 2. Always fetch from JSONbin — updates for all visitors
-  fetch(JSONBIN_URL)
+  // 2. Always fetch from Firebase — updates for all visitors
+  fetch(FIREBASE_URL)
     .then(function(r) { return r.json(); })
     .then(function(json) {
-      if (json && json.record) {
-        localStorage.setItem('kashi_data', JSON.stringify(json.record)); // cache locally
-        applyCampaignData(json.record);
+      if (json) {
+        localStorage.setItem('kashi_data', JSON.stringify(json)); // cache locally
+        applyCampaignData(json);
       }
     })
     .catch(function() {
-      // JSONbin unavailable — local cache or defaults already applied above
+      // Firebase unavailable — local cache or defaults already applied above
     });
 }
 
@@ -138,11 +138,7 @@ function applyCampaignData(data) {
   var needed = Math.max(0, goal - raised);
   var pct    = Math.max(0.5, (raised / goal) * 100);
 
-  function fmtCr(n) {
-    if (n >= 10000000) return (n / 10000000).toFixed(1) + ' Cr';
-    if (n >= 100000)   return (n / 100000).toFixed(1) + ' L';
-    return n.toLocaleString('en-IN');
-  }
+
 
   // Update data-count + live text (if already animated)
   function setCount(el, val) {
@@ -162,10 +158,10 @@ function applyCampaignData(data) {
   var mlPct    = document.getElementById('ml-pct');
   var mlFill   = document.getElementById('ml-fill');
 
-  if (mlRaised) mlRaised.textContent = '₹' + fmtCr(raised);
+  if (mlRaised) mlRaised.textContent = '₹' + raised.toLocaleString('en-IN');
   if (mlDonors) mlDonors.textContent = donors.toLocaleString('en-IN');
-  if (mlNeeded) mlNeeded.textContent = '₹' + fmtCr(needed);
-  if (mlTotal)  mlTotal.textContent  = '₹' + fmtCr(goal);
+  if (mlNeeded) mlNeeded.textContent = '₹' + needed.toLocaleString('en-IN');
+  if (mlTotal)  mlTotal.textContent  = '₹' + goal.toLocaleString('en-IN');
   if (mlPct)    mlPct.textContent    = pct.toFixed(1) + '% of goal reached';
   if (mlFill)   { setTimeout(function(){ mlFill.style.width = pct.toFixed(1) + '%'; }, 800); }
 
