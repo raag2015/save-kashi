@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Save Kashi Campaign</title>
+  <!--
+  ╔══════════════════════════════════════════╗
+  ║  SAVE KASHI — ADMIN PANEL               ║
+  ║  Default password : Kashi@2026          ║
+  ║  Change ADMIN_PASSWORD in <script>      ║
+  ╚══════════════════════════════════════════╝
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --blue:#3468c0; --blue-l:#ebf2ff; --green:#1a9d8a; --green-l:#e6f7f5;
+      --pink:#e07b72; --pink-l:#fef0ef; --text:#1e2d3d; --body:#445566;
+      --muted:#7a8fa6; --border:#e5ddd7; --bg:#fdf8f4; --white:#fff;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    a{color:inherit;text-decoration:none;}
+
+    /* ── Screens ── */
+    .screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+
+    /* ── Cards ── */
+    .card{background:var(--white);border-radius:20px;padding:36px;box-shadow:0 8px 40px rgba(30,45,61,.12);border:1px solid var(--border);width:100%;max-width:480px;}
+    .card-wide{max-width:880px;}
+
+    /* ── Logo ── */
+    .logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;}
+    .logo-icon{width:36px;height:36px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0;}
+
+    /* ── Form ── */
+    label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+    input[type="password"],input[type="number"],input[type="text"]{
+      width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;
+      font-size:15px;font-family:inherit;color:var(--text);background:#fff;
+      transition:border .2s,box-shadow .2s;outline:none;
+    }
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(52,104,192,.12);}
+    .field{margin-bottom:18px;}
+    .field-hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5;}
+
+    /* ── Buttons ── */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;text-decoration:none;}
+    .btn-primary{background:var(--blue);color:#fff;box-shadow:0 4px 16px rgba(52,104,192,.3);}
+    .btn-primary:hover{background:#2556a8;transform:translateY(-1px);}
+    .btn-green{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(26,157,138,.3);}
+    .btn-green:hover{background:#148a78;}
+    .btn-ghost{background:transparent;color:var(--body);border:1.5px solid var(--border);}
+    .btn-ghost:hover{background:var(--bg);}
+    .btn-full{width:100%;justify-content:center;}
+
+    /* ── Dashboard header ── */
+    .dash-hd{background:var(--white);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;}
+    .dash-hd-right{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;}
+    .dash-body{max-width:900px;margin:0 auto;padding:28px 20px;}
+    .dash-title{font-size:20px;font-weight:800;margin-bottom:4px;}
+    .dash-sub{font-size:14px;color:var(--muted);}
+
+    /* ── Grid ── */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;}
+    @media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+
+    /* ── Panel cards ── */
+    .panel{background:var(--white);border-radius:16px;padding:24px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(30,45,61,.06);}
+    .panel h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:18px;}
+
+    /* ── Preview stats ── */
+    .pstat{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f0ece8;}
+    .pstat:last-of-type{border:none;}
+    .pstat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+    .pstat-val{font-size:17px;font-weight:800;line-height:1;}
+    .pstat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+
+    /* ── Mini progress ── */
+    .mprog{margin-top:16px;}
+    .mprog-track{height:8px;background:#f0ecf0;border-radius:100px;overflow:hidden;margin:6px 0 4px;}
+    .mprog-fill{height:100%;background:linear-gradient(90deg,var(--blue),#6b9eff);border-radius:100px;transition:width .5s ease;}
+    .mprog-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+
+    /* ── Status messages ── */
+    .status{padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;margin-top:14px;display:none;align-items:center;gap:8px;}
+    .status.success{background:var(--green-l);color:#0d5a51;display:flex;}
+    .status.error{background:var(--pink-l);color:#8a2a25;display:flex;}
+
+    /* ── Setup steps ── */
+    .step{display:flex;gap:14px;margin-bottom:18px;}
+    .step-num{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+    .step-body h4{font-size:14px;font-weight:700;margin-bottom:3px;}
+    .step-body p{font-size:13px;color:var(--body);line-height:1.6;}
+    .step-body a{color:var(--blue);font-weight:600;}
+    pre{background:#f0ece8;padding:10px 14px;border-radius:8px;font-size:12px;margin-top:6px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;}
+
+    /* ── Error text ── */
+    .err{color:#c0473e;font-size:13px;margin-top:7px;display:none;}
+    .last-upd{font-size:12px;color:var(--muted);margin-top:12px;display:flex;align-items:center;gap:5px;}
+  </style>
+</head>
+<body>
+
+<!-- ══ 1. LOGIN ══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-login">
+  <div class="card">
+    <div style="margin-bottom:24px;">
+      <div class="logo"><div class="logo-icon"><i class="fas fa-heart"></i></div>Save Kashi — Admin</div>
+    </div>
+    <div style="text-align:center;margin-bottom:26px;">
+      <div style="width:54px;height:54px;background:var(--blue-l);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--blue);margin:0 auto 12px;"><i class="fas fa-lock"></i></div>
+      <h2 style="font-size:19px;font-weight:800;margin-bottom:5px;">Admin Login</h2>
+      <p style="font-size:14px;color:var(--muted);">Enter your admin password to manage campaign data.</p>
+    </div>
+    <div class="field">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="err" id="pw-err"><i class="fas fa-exclamation-circle"></i>&nbsp;Incorrect password. Please try again.</div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i> Log In</button>
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:14px;">
+      Default password: <code style="background:#f0ece8;padding:2px 7px;border-radius:5px;font-size:12px;">Kashi@2026</code>
+    </p>
+  </div>
+</div>
+
+<!-- ══ 2. SETUP (first-time JSONbin config) ══════════════════════════════ -->
+<div id="screen-setup" style="display:none;">
+  <div class="dash-hd">
+    <div class="logo"><div class="logo-icon"><i class="fas fa-heart"></i></div>Save Kashi — Admin</div>
+    <div class="dash-hd-right">
+      <a href="Save Kashi.html" target="_blank" class="btn btn-ghost" style="font-size:13px;"><i class="fas fa-arrow-up-right-from-square"></i> View Site</a>
+      <button class="btn btn-ghost" onclick="doLogout()" style="font-size:13px;"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="card card-wide" style="margin:0 auto;">
+      <h2 style="font-size:19px;font-weight:800;margin-bottom:6px;"><i class="fas fa-gears" style="color:var(--blue);margin-right:8px;"></i>One-Time Setup — JSONbin</h2>
+      <p style="font-size:14px;color:var(--body);margin-bottom:22px;">JSONbin ek free service hai jo numbers ko cloud mein store karta hai — taki sabke devices par same numbers dikhein. <strong>Ek baar setup karo, phir hamesha easy update.</strong></p>
+
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Free account banao</h4><p><a href="https://jsonbin.io" target="_blank">jsonbin.io</a> par jaao → Sign Up → Email verify karo (free plan kaafi hai)</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Naya Bin banao</h4><p>Dashboard → "Create Bin" → Neeche diya JSON paste karo → Save karo:</p><pre>{"totalFunds":150000000,"raised":4523750,"donors":312,"lastUpdated":"2026-05-25"}</pre></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Bin ko Public karo</h4><p>Bin settings (gear icon) → "Private" toggle OFF karo → taaki main site bina key ke read kar sake</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Bin ID aur Access Key copy karo</h4><p>Bin ID URL mein hoga: <code style="background:#f0ece8;padding:1px 5px;border-radius:4px;">jsonbin.io/v3/b/<strong>YAHAN_HAI</strong></code><br>Access Key: Account → API Keys → Master Key copy karo</p></div></div>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:22px 0;">
+      <div style="max-width:420px;">
+        <div class="field">
+          <label>Bin ID (already set)</label>
+          <input type="text" value="6a141deb6610dd3ae8a15f8b" readonly style="background:#f0ece8;color:var(--muted);cursor:not-allowed;">
+          <div class="field-hint">✓ Yeh fixed hai — change ki zaroorat nahi</div>
+        </div>
+        <div class="field">
+          <label>Master Access Key (likhne ke liye)</label>
+          <input type="password" id="setup-key" placeholder="$2b$10$...">
+          <div class="field-hint">Account → API Keys → Master Key. Sirf aapke browser mein save hoga.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary" onclick="saveSetup()"><i class="fas fa-check"></i> Configuration Save Karo</button>
+        <button onclick="skipSetup()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;">Skip — sirf is device par save karo →</button>
+      </div>
+      <div id="setup-status" class="status"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. DASHBOARD ══════════════════════════════════════════════════════ -->
+<div id="screen-dash" style="display:none;">
+  <div class="dash-hd">
+    <div class="logo"><div class="logo-icon"><i class="fas fa-heart"></i></div>Save Kashi — Admin</div>
+    <div class="dash-hd-right">
+      <button class="btn btn-ghost" onclick="goSetup()" style="font-size:13px;"><i class="fas fa-gears"></i> JSONbin Setup</button>
+      <a href="Save Kashi.html" target="_blank" class="btn btn-ghost" style="font-size:13px;"><i class="fas fa-arrow-up-right-from-square"></i> Live Site</a>
+      <button class="btn btn-ghost" onclick="doLogout()" style="font-size:13px;"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+      <div>
+        <h1 class="dash-title">Campaign Numbers</h1>
+        <p class="dash-sub">Yahan update karo — site par turant dikhega</p>
+      </div>
+      <button class="btn btn-ghost" onclick="refreshData()" style="font-size:13px;"><i class="fas fa-rotate-right"></i> Server se Refresh</button>
+    </div>
+
+    <div class="two-col">
+
+      <!-- Left: Preview -->
+      <div class="panel">
+        <h3><i class="fas fa-eye" style="margin-right:5px;"></i> Live Preview (site par aisa dikhega)</h3>
+
+        <div class="pstat">
+          <div class="pstat-icon" style="background:var(--blue-l);color:var(--blue);"><i class="fas fa-indian-rupee-sign"></i></div>
+          <div><div class="pstat-val" id="pv-raised" style="color:var(--blue);">₹45.2 Lakh</div><div class="pstat-lbl">Amount Raised</div></div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-icon" style="background:#fff8e8;color:#b06020;"><i class="fas fa-bullseye"></i></div>
+          <div><div class="pstat-val" id="pv-total" style="color:#b06020;">₹15 Crore</div><div class="pstat-lbl">Total Funds Goal</div></div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-icon" style="background:var(--green-l);color:var(--green);"><i class="fas fa-users"></i></div>
+          <div><div class="pstat-val" id="pv-donors" style="color:var(--green);">312</div><div class="pstat-lbl">Donors / Supporters</div></div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-icon" style="background:var(--pink-l);color:var(--pink);"><i class="fas fa-chart-line"></i></div>
+          <div><div class="pstat-val" id="pv-needed" style="color:var(--pink);">₹14.5 Cr</div><div class="pstat-lbl">Abhi bhi chahiye</div></div>
+        </div>
+
+        <div class="mprog">
+          <div class="mprog-labels">
+            <span id="pv-pct">3.0% funded</span>
+            <span>Goal: ₹15 Crore</span>
+          </div>
+          <div class="mprog-track"><div class="mprog-fill" id="pv-fill" style="width:3%;"></div></div>
+        </div>
+        <div class="last-upd" id="pv-upd"><i class="fas fa-clock"></i> Last updated: —</div>
+      </div>
+
+      <!-- Right: Edit Form -->
+      <div class="panel">
+        <h3><i class="fas fa-pencil" style="margin-right:5px;color:var(--blue);"></i> Numbers Update Karo</h3>
+
+        <div class="field">
+          <label>Total Funds Goal (₹)</label>
+          <input type="number" id="inp-total" placeholder="e.g. 150000000" min="0" oninput="livePreview()">
+          <div class="field-hint">Default ₹15 Crore = 150000000 &nbsp;|&nbsp; Sirf badle agar goal change ho</div>
+        </div>
+        <div class="field">
+          <label>Amount Raised So Far (₹)</label>
+          <input type="number" id="inp-raised" placeholder="e.g. 4523750" min="0" oninput="livePreview()">
+          <div class="field-hint">4523750 = ₹45.23 Lakh &nbsp;|&nbsp; 10000000 = ₹1 Crore</div>
+        </div>
+        <div class="field">
+          <label>Number of Donors / Supporters</label>
+          <input type="number" id="inp-donors" placeholder="e.g. 312" min="0" oninput="livePreview()">
+        </div>
+
+        <button class="btn btn-green btn-full" onclick="saveData()">
+          <i class="fas fa-floppy-disk"></i>&nbsp; Save &amp; Publish Live
+        </button>
+        <div id="save-status" class="status"></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
+          <i class="fas fa-clock"></i>&nbsp; Last Updated date apne aap aaj ki date se set hogi.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPT ════════════════════════════════════════════════════════════ -->
+<script>
+
+  // ── Config — CHANGE PASSWORD BEFORE DEPLOYING ───────────────────────────
+  var ADMIN_PASSWORD = 'Kashi@2026'; // ← CHANGE THIS
+  var GOAL = 150000000; // ₹15 Crore — do not change
+
+  // Credentials — hardcoded (only controls campaign display numbers)
+  var BIN_ID     = '6a141deb6610dd3ae8a15f8b';
+  var ACCESS_KEY = '$2a$10$WdkPW3rw7nuseVqb.jC6xerXCt37gFY0WDzhcJzqwnJOrAmnoUfZ2';
+
+  // Auto-save config so setup screen is skipped
+  localStorage.setItem('kashi_admin_cfg', JSON.stringify({ binId: BIN_ID, accessKey: ACCESS_KEY }));
+  var _cfg = { binId: BIN_ID, accessKey: ACCESS_KEY };
+
+  // ── Auth ─────────────────────────────────────────────────────────────────
+  function doLogin() {
+    var val = document.getElementById('pw').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('pw-err').style.display = 'none';
+      localStorage.setItem('kashi_admin_auth', '1');
+      showScreen('dashboard');
+    } else {
+      document.getElementById('pw-err').style.display = 'block';
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+    }
+  }
+
+  function doLogout() {
+    localStorage.removeItem('kashi_admin_auth');
+    showScreen('login');
+  }
+
+  // ── Screens ───────────────────────────────────────────────────────────────
+  function showScreen(name) {
+    ['login','setup','dash'].forEach(function(s) {
+      document.getElementById('screen-' + s).style.display = 'none';
+    });
+    if (name === 'login')     { document.getElementById('screen-login').style.display = 'flex'; }
+    if (name === 'setup')     { document.getElementById('screen-setup').style.display = 'block'; }
+    if (name === 'dashboard') { document.getElementById('screen-dash').style.display  = 'block'; refreshData(); }
+  }
+
+  function goSetup() { showScreen('setup'); }
+
+  // ── Setup ─────────────────────────────────────────────────────────────────
+  function saveSetup() {
+    var key = document.getElementById('setup-key').value.trim();
+    var st  = document.getElementById('setup-status');
+    if (!key) {
+      st.className = 'status error'; st.textContent = '⚠ Access Key daalo.'; return;
+    }
+    ACCESS_KEY = key;
+    localStorage.setItem('kashi_admin_cfg', JSON.stringify({ binId: BIN_ID, accessKey: key }));
+    st.className = 'status success'; st.textContent = '✓ Saved! Dashboard khul raha hai…';
+    setTimeout(function() { showScreen('dashboard'); }, 1100);
+  }
+
+  function skipSetup() {
+    localStorage.setItem('kashi_admin_cfg', JSON.stringify({ binId: '', accessKey: '' }));
+    showScreen('dashboard');
+  }
+
+  // ── Data helpers ──────────────────────────────────────────────────────────
+  var DEFAULTS = { totalFunds: 150000000, raised: 4523750, donors: 312, lastUpdated: '' };
+
+  function getLocal() {
+    try { var d = localStorage.getItem('kashi_data'); return d ? JSON.parse(d) : DEFAULTS; }
+    catch(e) { return DEFAULTS; }
+  }
+
+  function setLocal(data) {
+    localStorage.setItem('kashi_data', JSON.stringify(data));
+  }
+
+  function fmtRs(n) {
+    if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
+    if (n >= 100000)   return '₹' + (n / 100000).toFixed(1)   + ' Lakh';
+    return '₹' + n.toLocaleString('en-IN');
+  }
+
+  // ── Refresh ───────────────────────────────────────────────────────────────
+  async function refreshData() {
+    var data = getLocal();
+    try {
+      var r = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest');
+      var j = await r.json();
+      if (j && j.record) { data = j.record; setLocal(data); }
+    } catch(e) { console.warn('JSONbin fetch failed, using local.'); }
+    fillForm(data);
+    updatePreview(data);
+  }
+
+  function fillForm(data) {
+    document.getElementById('inp-total').value  = data.totalFunds || GOAL;
+    document.getElementById('inp-raised').value = data.raised     || 0;
+    document.getElementById('inp-donors').value = data.donors     || 0;
+  }
+
+  function updatePreview(data) {
+    var total  = parseInt(data.totalFunds) || GOAL;
+    var raised = parseInt(data.raised)     || 0;
+    var donors = parseInt(data.donors)     || 0;
+    var needed = Math.max(0, total - raised);
+    var pct    = Math.max(0.5, (raised / total) * 100);
+
+    document.getElementById('pv-total').textContent  = fmtRs(total);
+    document.getElementById('pv-raised').textContent = fmtRs(raised);
+    document.getElementById('pv-donors').textContent = donors.toLocaleString('en-IN');
+    document.getElementById('pv-needed').textContent = fmtRs(needed);
+    document.getElementById('pv-pct').textContent    = pct.toFixed(1) + '% funded';
+    document.getElementById('pv-fill').style.width   = pct.toFixed(1) + '%';
+    document.getElementById('pv-upd').innerHTML      =
+      '<i class="fas fa-clock"></i> Last updated: ' + (data.lastUpdated || '—');
+  }
+
+  function livePreview() {
+    updatePreview({
+      totalFunds: parseInt(document.getElementById('inp-total').value)  || GOAL,
+      raised:     parseInt(document.getElementById('inp-raised').value) || 0,
+      donors:     parseInt(document.getElementById('inp-donors').value) || 0,
+    });
+  }
+
+  // ── Save ──────────────────────────────────────────────────────────────────
+  async function saveData() {
+    var raised = parseInt(document.getElementById('inp-raised').value) || 0;
+    var donors = parseInt(document.getElementById('inp-donors').value) || 0;
+    var st     = document.getElementById('save-status');
+    var today  = new Date().toISOString().split('T')[0];
+    var total  = parseInt(document.getElementById('inp-total').value)  || GOAL;
+    var payload = { totalFunds: total, raised: raised, donors: donors, lastUpdated: today };
+
+    setLocal(payload);
+    updatePreview(payload);
+
+    if (BIN_ID && ACCESS_KEY) {
+      st.className = 'status'; st.style.display = 'flex'; st.textContent = '⏳ Server par save ho raha hai…';
+      try {
+        var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Access-Key': ACCESS_KEY },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          st.className = 'status success';
+          st.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Saved! Sabke visitors ko abhi nayi numbers dikhengi.';
+        } else { throw new Error('HTTP ' + res.status); }
+      } catch(e) {
+        st.className = 'status error';
+        st.innerHTML = '<i class="fas fa-triangle-exclamation"></i>&nbsp; Server save failed (' + e.message + '). Local mein save hua. Bin ID / Key check karo.';
+      }
+    } else {
+      st.className = 'status success';
+      st.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Local mein save hua. JSONbin setup karo cross-device sync ke liye.';
+    }
+    setTimeout(function() { st.style.display = 'none'; }, 5000);
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  (function init() {
+    var authed = localStorage.getItem('kashi_admin_auth') === '1';
+    if (!authed) showScreen('login');
+    else         showScreen('dashboard'); // config always present — skip setup
+  })();
+
+</script>
+</body>
+</html>
