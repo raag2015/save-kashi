@@ -299,6 +299,7 @@ footer { background: #1a2333; color: rgba(255,255,255,.75); padding: 56px 0 28px
 .wa-float:hover { transform: scale(1.1); }
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 200; transform: translateY(100px); opacity: 0; transition: all .3s ease; pointer-events: none; box-shadow: var(--shadow-md); }
 .toast.show { transform: translateY(0); opacity: 1; }
+.milaap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 @media(max-width:900px){
   .donate-two-col { grid-template-columns: 1fr !important; }
@@ -313,7 +314,7 @@ footer { background: #1a2333; color: rgba(255,255,255,.75); padding: 56px 0 28px
 @media(max-width:600px){
   .sec { padding: 56px 0; }
   .upi-inner { grid-template-columns: 1fr; gap: 22px; }
-  .qr-wrap { flex-direction: row; justify-content: center; }
+  .milaap-grid { grid-template-columns: 1fr; }
   .bank-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .btn-row { flex-direction: column; }
